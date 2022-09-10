@@ -44,27 +44,9 @@ class User extends Authenticatable implements MustVerifyEmail
     ];
 
     /**
-     *
-     */
-    public static function boot()
-    {
-        parent::boot();
-
-        static::updated(function ($user) {
-            if ($password = Arr::get($user->getChanges(), 'password')) {
-                $user->storeCurrentPasswordInHistory($password);
-            }
-        });
-
-        static::created(function ($user) {
-            $user->storeCurrentPasswordInHistory($user->password);
-        });
-    }
-
-    /**
      * @param $password
      */
-    protected function storeCurrentPasswordInHistory($password) {
+    public function storeCurrentPasswordInHistory($password) {
         $this->passwordHistory()->create(compact('password'));
     }
 
