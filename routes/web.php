@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\HomeController;
+use App\Http\Controllers\User\ChangePasswordController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -15,14 +17,9 @@ use Inertia\Inertia;
 |
 */
 
-Route::get('/', function () {
-    return Inertia::render('Welcome', [
-        'canLogin' => Route::has('login'),
-        'canRegister' => Route::has('register'),
-        'laravelVersion' => Application::VERSION,
-        'phpVersion' => PHP_VERSION,
-    ]);
-});
+Route::get('/', HomeController::class);
+Route::get('/user/change-password', ChangePasswordController::class)->middleware(['auth', 'verified'])->name('user.change.password');
+Route::post('/user/change-password/update', [ChangePasswordController::class, 'save'])->middleware(['auth', 'verified'])->name('user.change.password.save');
 
 Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
