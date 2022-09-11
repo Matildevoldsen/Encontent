@@ -50,6 +50,23 @@ class User extends Authenticatable implements MustVerifyEmail
         $this->passwordHistory()->create(compact('password'));
     }
 
+    /**
+     * Undocumented function
+     *
+     * @param integer $keep
+     * @return void
+     */
+    public function deletePasswordHistory(int $keep = 5)
+    {
+        if (!$this->passwordHistory()->first()) {
+            return;
+        }
+
+        $this->passwordHistory()
+            ->where('id', '<=', $this->passwordHistory()->first()->id - $keep)
+            ->delete();
+    }
+
     public function passwordHistory(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->hasMany(PasswordHistory::class)
