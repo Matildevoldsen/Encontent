@@ -44,28 +44,27 @@ class User extends Authenticatable implements MustVerifyEmail
     ];
 
     /**
-     *
+     * @param $password
      */
-    public static function boot()
-    {
-        parent::boot();
-
-        static::updated(function ($user) {
-            if ($password = Arr::get($user->getChanges(), 'password')) {
-                $user->storeCurrentPasswordInHistory($password);
-            }
-        });
-
-        static::created(function ($user) {
-            $user->storeCurrentPasswordInHistory($user->password);
-        });
+    public function storeCurrentPasswordInHistory($password) {
+        $this->passwordHistory()->create(compact('password'));
     }
 
     /**
-     * @param $password
+     * Undocumented function
+     *
+     * @param integer $keep
+     * @return void
      */
-    protected function storeCurrentPasswordInHistory($password) {
-        $this->passwordHistory()->create(compact('password'));
+    public function deletePasswordHistory(int $keep = 5)
+    {
+        if (!$this->passwordHistory()->first()) {
+            return;
+        }
+
+        $this->passwordHistory()
+            ->where('id', '<=', $this->passwordHistory()->first()->id - $keep)
+            ->delete();
     }
 
     public function passwordHistory(): \Illuminate\Database\Eloquent\Relations\HasMany
