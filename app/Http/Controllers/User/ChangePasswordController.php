@@ -4,6 +4,7 @@ namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Rules\CheckPasswordMatchesCurrent;
 use App\Rules\NotFromPasswordHistory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -28,6 +29,10 @@ class ChangePasswordController extends Controller
     public function save(Request $request): \Illuminate\Http\RedirectResponse
     {
         $this->validate($request, [
+            'old_password' => [
+                'required',
+                new CheckPasswordMatchesCurrent()
+            ],
             'password' => [
                 'required',
                 'confirmed',

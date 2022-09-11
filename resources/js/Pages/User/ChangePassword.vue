@@ -9,6 +9,7 @@ import {Head, Link, useForm} from '@inertiajs/inertia-vue3';
 import {Inertia} from "@inertiajs/inertia";
 
 const form = useForm({
+    old_password: '',
     password: '',
     password_confirmation: ''
 });
@@ -21,6 +22,7 @@ let messages = {
 const submit = () => {
     form.post(route('user.change.password.save'), {
         onFinish: function () {
+            form.old_password = ''
             form.password = ''
             form.password_confirmation = ''
         },
